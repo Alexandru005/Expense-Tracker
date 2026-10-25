@@ -2,7 +2,9 @@ CREATE TABLE users (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     email VARCHAR(128) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL
+    password_hash VARCHAR(255) NOT NULL,
+    balance NUMERIC(12,2) DEFAULT 0 NOT NULL CHECK (balance >= 0),
+    savings NUMERIC(12,2) DEFAULT 0 NOT NULL CHECK (savings >= 0)
 );
 
 CREATE TABLE transactions(
