@@ -8,6 +8,7 @@ import com.alexstefan.expense_tracker.entity.User;
 import com.alexstefan.expense_tracker.repository.TransactionRepository;
 import com.alexstefan.expense_tracker.repository.UserRepository;
 import com.alexstefan.expense_tracker.service.TransactionService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,12 +20,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
 
     public TransactionServiceImpl(TransactionRepository transactionRepository,
-                                  UserRepository userRepository){
+                                  UserRepository userRepository) {
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
     }
@@ -35,7 +37,7 @@ public class TransactionServiceImpl implements TransactionService {
         switch(type){
             case EXPENSE:
                 if(amount.compareTo(user.getBalance()) > 0)
-                    throw new RuntimeException("Invalid amount!");
+                    throw new RuntimeException("Insufficient balance for this expense");
                 user.setBalance(user.getBalance().subtract(amount));
                 break;
 
@@ -45,14 +47,14 @@ public class TransactionServiceImpl implements TransactionService {
 
             case SAVINGS_DEPOSIT:
                 if(amount.compareTo(user.getBalance()) > 0)
-                    throw new RuntimeException("Invalid amount!");
+                    throw new RuntimeException("Insufficient balance for this savings deposit");
                 user.setBalance(user.getBalance().subtract(amount));
                 user.setSavings(user.getSavings().add(amount));
                 break;
 
             case SAVINGS_WITHDRAWAL:
                 if(amount.compareTo(user.getSavings()) > 0)
-                    throw new RuntimeException("Invalid amount!");
+                    throw new RuntimeException("Insufficient savings for this withdrawal");
                 user.setBalance(user.getBalance().add(amount));
                 user.setSavings(user.getSavings().subtract(amount));
         }
@@ -73,37 +75,31 @@ public class TransactionServiceImpl implements TransactionService {
         return transaction;
     }
 
-    public void addTransaction(AddTransactionRequestDTO requestDTO){
-
-        if(requestDTO.amount().compareTo(BigDecimal.ZERO) <= 0)
+    public void addTransaction(User principal, AddTransactionRequestDTO requestDTO){
+        if (requestDTO.amount().compareTo(BigDecimal.ZERO) <= 0)
             throw new RuntimeException("Invalid amount");
 
-        User user = userRepository.findById(requestDTO.userId())
-                .orElseThrow(() -> new RuntimeException("User not found!"));
+        User user = userRepository.findById(principal.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         makeTransaction(user, requestDTO.amount(), requestDTO.type());
+        userRepository.save(user);
 
         Transaction transaction = createTransaction(user, requestDTO.title(), requestDTO.type(),
-                                                    requestDTO.category(), requestDTO.amount());
-
+                requestDTO.category(), requestDTO.amount());
         transactionRepository.save(transaction);
     }
 
 
 
 
-
-
     //          DISPLAY TRANSACTIONS
-    public List<TransactionListResponseDTO> getTransactionsListByTimeInterval(TransactionListRequestDTO requestDTO){
-
-        userRepository.findById(requestDTO.idUser())
-                .orElseThrow(() -> new RuntimeException("User does not exists!"));
-
+    public List<TransactionListResponseDTO> getTransactionsListByTimeInterval(User user, TransactionListRequestDTO requestDTO){
         if(requestDTO.month() != null && (requestDTO.month() < 1 || requestDTO.month() > 12))
             throw new RuntimeException("Invalid month!");
 
-        List<Transaction> transactionList = transactionRepository.findTransactionsByTimeIntervalWhichAreNotWithdrawals(requestDTO);
+        List<Transaction> transactionList = transactionRepository.findTransactionsByTimeIntervalWhichAreNotWithdrawals(
+                user.getId(), requestDTO.year(), requestDTO.month());
 
         if(transactionList.isEmpty())
             return Collections.emptyList();
@@ -119,9 +115,9 @@ public class TransactionServiceImpl implements TransactionService {
                             .toList();
     }
 
-    public List<SavingsListResponseDTO> getSavingsList(SavingsListRequestDTO requestDTO){
+    public List<SavingsListResponseDTO> getSavingsList(User user, SavingsListRequestDTO requestDTO){
 
-        List<Transaction> savingsList = transactionRepository.findSavings(requestDTO);
+        List<Transaction> savingsList = transactionRepository.findSavings(user.getId());
 
         if(savingsList.isEmpty())
             return Collections.emptyList();
@@ -157,15 +153,12 @@ public class TransactionServiceImpl implements TransactionService {
 
     }
 
-    public List<ChartTransactionResponseDTO> getChartTransactionsDetails(ChartTransactionRequestDTO requestDTO){
-
-        userRepository.findById(requestDTO.idUser())
-                .orElseThrow(() -> new RuntimeException("User does not exists!"));
-
+    public List<ChartTransactionResponseDTO> getChartTransactionsDetails(User user, ChartTransactionRequestDTO requestDTO){
         if(requestDTO.month() != null && (requestDTO.month() < 1 || requestDTO.month() > 12))
             throw new RuntimeException("Invalid month!");
 
-        List<Transaction> listOfAllExpenses = transactionRepository.findTransactionsByTimeIntervalWhichAreExpenses(requestDTO);
+        List<Transaction> listOfAllExpenses = transactionRepository.findTransactionsByTimeIntervalWhichAreExpenses(
+                user.getId(), requestDTO.year(), requestDTO.month());
 
         if(listOfAllExpenses.isEmpty())
             return Collections.emptyList();
@@ -193,12 +186,9 @@ public class TransactionServiceImpl implements TransactionService {
                                     .toList();
     }
 
-    public List<ChartSavingsYearlyResponseDTO> getYearlyChartSavingsDetails(ChartSavingsYearlyRequestDTO requestDTO){
+    public List<ChartSavingsYearlyResponseDTO> getYearlyChartSavingsDetails(User user, ChartSavingsYearlyRequestDTO requestDTO){
 
-        userRepository.findById(requestDTO.idUser())
-                .orElseThrow(() -> new RuntimeException("User does not exists!"));
-
-        List<Transaction> savingsInAYear = transactionRepository.getSavingsByYear(requestDTO);
+        List<Transaction> savingsInAYear = transactionRepository.getSavingsByYear(user.getId(), requestDTO.year());
 
         if(savingsInAYear.isEmpty())
             return Collections.emptyList();

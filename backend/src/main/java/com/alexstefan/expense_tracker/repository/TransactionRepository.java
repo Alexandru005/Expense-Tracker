@@ -16,42 +16,44 @@ import java.util.List;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     @Query("""
     SELECT t FROM Transaction t
-    WHERE t.user.id = :#{#request.idUser}
-      AND ((YEAR(t.date) = :#{#request.year} AND :#{#request.month} IS NULL)
+    WHERE t.user.id = :userId
+      AND ((YEAR(t.date) = :year AND :month IS NULL)
           OR
-          (YEAR(t.date) = :#{#request.year} AND MONTH(t.date) = :#{#request.month}))
+          (YEAR(t.date) = :year AND MONTH(t.date) = :month))
       AND t.type <> com.alexstefan.expense_tracker.constants.TransactionType.SAVINGS_WITHDRAWAL
     ORDER BY t.date DESC
     """)
-    List<Transaction> findTransactionsByTimeIntervalWhichAreNotWithdrawals(@Param("request") TransactionListRequestDTO requestDTO);
+    List<Transaction> findTransactionsByTimeIntervalWhichAreNotWithdrawals(
+            @Param("userId") Long userId, @Param("year") Integer year, @Param("month") Integer month);
 
     @Query("""
     SELECT t FROM Transaction t 
-    WHERE t.user.id = :#{#request.idUser}
+    WHERE t.user.id = :userId
         AND t.type = com.alexstefan.expense_tracker.constants.TransactionType.EXPENSE
-        AND ((YEAR(t.date) = :#{#request.year} AND :#{#request.month} IS NULL)
+        AND ((YEAR(t.date) = :year AND :month IS NULL)
             OR
-            (YEAR(t.date) = :#{#request.year} AND MONTH(t.date) = :#{#request.month}))
+            (YEAR(t.date) = :year AND MONTH(t.date) = :month))
       
     """)
-    List<Transaction> findTransactionsByTimeIntervalWhichAreExpenses(@Param("request") ChartTransactionRequestDTO requestDTO);
+    List<Transaction> findTransactionsByTimeIntervalWhichAreExpenses(
+            @Param("userId") Long userId, @Param("year") Integer year, @Param("month") Integer month);
 
     @Query("""
     SELECT t FROM Transaction t 
-    WHERE :#{#request.idUser} = t.user.id AND
+    WHERE :userId = t.user.id AND
         (t.type = com.alexstefan.expense_tracker.constants.TransactionType.SAVINGS_WITHDRAWAL OR
          t.type = com.alexstefan.expense_tracker.constants.TransactionType.SAVINGS_DEPOSIT)
     ORDER BY t.date DESC
     """)
-    List<Transaction> findSavings(@Param("request")SavingsListRequestDTO requestDTO);
+    List<Transaction> findSavings(@Param("userId") Long userId);
 
 
     @Query("""
      SELECT t FROM Transaction t
-     WHERE t.user.id = :#{#request.idUser} AND
-        :#{#request.year} = YEAR(t.date) AND
+     WHERE t.user.id = :userId AND
+        :year = YEAR(t.date) AND
         t.type = com.alexstefan.expense_tracker.constants.TransactionType.SAVINGS_DEPOSIT
      ORDER BY t.date
      """)
-    List<Transaction> getSavingsByYear(@Param("request") ChartSavingsYearlyRequestDTO requestDTO);
+    List<Transaction> getSavingsByYear(@Param("userId") Long userId, @Param("year") Integer year);
 }

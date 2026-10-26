@@ -5,8 +5,5 @@ import jakarta.validation.constraints.NotNull;
 
 public record ChartSavingsYearlyRequestDTO(
         @NotNull
-        Long idUser,
-
-        @NotNull
         Integer year
 ){}

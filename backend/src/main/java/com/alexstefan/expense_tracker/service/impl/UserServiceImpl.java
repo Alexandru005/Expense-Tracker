@@ -3,29 +3,43 @@ package com.alexstefan.expense_tracker.service.impl;
 import com.alexstefan.expense_tracker.dto.user.LoginRequestDTO;
 import com.alexstefan.expense_tracker.dto.user.RegisterRequestDTO;
 import com.alexstefan.expense_tracker.dto.user.UserResponseDTO;
+import com.alexstefan.expense_tracker.dto.user.AuthResponseDTO;
 import com.alexstefan.expense_tracker.entity.User;
 import com.alexstefan.expense_tracker.repository.UserRepository;
+import com.alexstefan.expense_tracker.security.JwtService;
 import com.alexstefan.expense_tracker.service.UserService;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
-    public UserServiceImpl(UserRepository userRepository){
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService){
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     public UserResponseDTO register(RegisterRequestDTO requestDTO){
-        if(userRepository.existsByEmail(requestDTO.email())){
+        String email = requestDTO.email().trim().toLowerCase();
+
+        if(userRepository.existsByEmail(email)){
             throw new RuntimeException("This email already exists!");
         }
 
         User user = new User();
-        user.setEmail(requestDTO.email());
-        user.setName(requestDTO.name());
-        user.setPasswordHash(requestDTO.password());
+        user.setEmail(email);
+        user.setName(requestDTO.name().trim());
+        user.setPasswordHash(passwordEncoder.encode(requestDTO.password()));
 
         User savedUser = userRepository.save(user);
 
@@ -38,14 +52,21 @@ public class UserServiceImpl implements UserService {
         );
     }
 
-    public UserResponseDTO login(LoginRequestDTO requestDTO){
-        User user = userRepository.findByEmail(requestDTO.email())
-                .orElseThrow(() -> new RuntimeException("Email was not found"));
+    public AuthResponseDTO login(LoginRequestDTO requestDTO){
+        String email = requestDTO.email().trim().toLowerCase();
 
-        if(!user.getPasswordHash().equals(requestDTO.password()))
-            throw new RuntimeException("Password is incorect!");
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(email, requestDTO.password())
+        );
 
-        return new UserResponseDTO(
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        String token = jwtService.generateToken(user);
+
+
+        return new AuthResponseDTO(
+                token,
                 user.getId(),
                 user.getName(),
                 user.getEmail(),

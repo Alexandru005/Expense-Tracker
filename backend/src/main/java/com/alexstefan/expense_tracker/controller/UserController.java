@@ -4,6 +4,7 @@ import com.alexstefan.expense_tracker.constants.ApiConstants;
 import com.alexstefan.expense_tracker.dto.user.LoginRequestDTO;
 import com.alexstefan.expense_tracker.dto.user.RegisterRequestDTO;
 import com.alexstefan.expense_tracker.dto.user.UserResponseDTO;
+import com.alexstefan.expense_tracker.dto.user.AuthResponseDTO;
 import com.alexstefan.expense_tracker.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class UserController {
     }
 
     @PostMapping(ApiConstants.PATH_LOGIN)
-    public ResponseEntity<UserResponseDTO> login(@Valid @RequestBody LoginRequestDTO user){
+    public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody LoginRequestDTO user){
         return ResponseEntity.ok(userService.login(user));
     }
 }

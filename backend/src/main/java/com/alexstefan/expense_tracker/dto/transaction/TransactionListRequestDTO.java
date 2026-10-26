@@ -6,9 +6,6 @@ import jakarta.validation.constraints.NotNull;
 
 public record TransactionListRequestDTO(
         @NotNull
-        Long idUser,
-
-        @NotNull
         Integer year,
 
         @Nullable

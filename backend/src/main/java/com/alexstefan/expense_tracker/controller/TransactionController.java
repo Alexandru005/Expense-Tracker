@@ -11,9 +11,11 @@ import com.alexstefan.expense_tracker.dto.transaction.SavingsListResponseDTO;
 import com.alexstefan.expense_tracker.dto.transaction.TransactionListRequestDTO;
 import com.alexstefan.expense_tracker.dto.transaction.TransactionListResponseDTO;
 import com.alexstefan.expense_tracker.service.TransactionService;
+import com.alexstefan.expense_tracker.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,36 +28,37 @@ public class TransactionController {
 
     @PostMapping
     public ResponseEntity<Void> addTransaction(
-            @Valid @RequestBody AddTransactionRequestDTO requestDTO) {
-        transactionService.addTransaction(requestDTO);
+            @Valid @RequestBody AddTransactionRequestDTO requestDTO,
+            @AuthenticationPrincipal User user) {
+        transactionService.addTransaction(user, requestDTO);
         return ResponseEntity.ok().build();
     }
 
-    // Changed from POST with @RequestBody to GET with @ModelAttribute.
     @GetMapping(ApiConstants.TRANSACTION_LIST)
     public ResponseEntity<List<TransactionListResponseDTO>> getTransactions(
-            @Valid @ModelAttribute TransactionListRequestDTO requestDTO) {
-        return ResponseEntity.ok(transactionService.getTransactionsListByTimeInterval(requestDTO));
+            @Valid @ModelAttribute TransactionListRequestDTO requestDTO,
+            @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(transactionService.getTransactionsListByTimeInterval(user, requestDTO));
     }
 
-    // Changed from POST with @RequestBody to GET with @ModelAttribute.
     @GetMapping(ApiConstants.SAVINGS_LIST)
     public ResponseEntity<List<SavingsListResponseDTO>> getSavings(
-            @Valid @ModelAttribute SavingsListRequestDTO requestDTO) {
-        return ResponseEntity.ok(transactionService.getSavingsList(requestDTO));
+            @Valid @ModelAttribute SavingsListRequestDTO requestDTO,
+            @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(transactionService.getSavingsList(user, requestDTO));
     }
 
-    // Changed from POST with @RequestBody to GET with @ModelAttribute.
     @GetMapping(ApiConstants.EXPENSE_CHART)
     public ResponseEntity<List<ChartTransactionResponseDTO>> getExpenseChart(
-            @Valid @ModelAttribute ChartTransactionRequestDTO requestDTO) {
-        return ResponseEntity.ok(transactionService.getChartTransactionsDetails(requestDTO));
+            @Valid @ModelAttribute ChartTransactionRequestDTO requestDTO,
+            @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(transactionService.getChartTransactionsDetails(user, requestDTO));
     }
 
-    // Changed from POST with @RequestBody to GET with @ModelAttribute.
     @GetMapping(ApiConstants.YEARLY_SAVINGS_CHART)
     public ResponseEntity<List<ChartSavingsYearlyResponseDTO>> getYearlySavingsChart(
-            @Valid @ModelAttribute ChartSavingsYearlyRequestDTO requestDTO) {
-        return ResponseEntity.ok(transactionService.getYearlyChartSavingsDetails(requestDTO));
+            @Valid @ModelAttribute ChartSavingsYearlyRequestDTO requestDTO,
+            @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(transactionService.getYearlyChartSavingsDetails(user, requestDTO));
     }
 }

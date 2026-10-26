@@ -16,8 +16,8 @@ public final class ApiConstants {
     public static final String USER_BY_ID = USERS_BASE + PATH_ID;
     public static final String USER_BY_EMAIL = USERS_BASE + PATH_EMAIL;
     public static final String TRANSACTION_BY_ID = TRANSACTIONS_BASE + PATH_ID;
-    public static final String TRANSACTION_LIST = TRANSACTIONS_BASE + "/list";
-    public static final String SAVINGS_LIST = TRANSACTIONS_BASE + "/savings/list";
-    public static final String EXPENSE_CHART = TRANSACTIONS_BASE + "/chart/expenses";
-    public static final String YEARLY_SAVINGS_CHART = TRANSACTIONS_BASE + "/chart/savings/yearly";
+    public static final String TRANSACTION_LIST =  "/list";
+    public static final String SAVINGS_LIST = "/savings/list";
+    public static final String EXPENSE_CHART = "/chart/expenses";
+    public static final String YEARLY_SAVINGS_CHART = "/chart/savings/yearly";
 }
