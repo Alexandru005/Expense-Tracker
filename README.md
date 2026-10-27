@@ -25,7 +25,7 @@
 
 | Layer    | Technologies                                   |
 |----------|------------------------------------------------|
-| Backend  | Java 21, Spring Boot, Maven, PostgreSQL        |
+| Backend  | Java 25, Spring Boot, Maven, PostgreSQL        |
 | Frontend | JavaScript, HTML, CSS, React, Vite, npm        |
 | DevOps   | Docker, Docker Compose                         |
 
@@ -58,7 +58,7 @@ expense-tracker/
 ### Prerequisites
 
 - [Docker](https://www.docker.com/) (running)
-- Java 21
+- Java 25
 - Node.js and npm
 
 ### Run the app

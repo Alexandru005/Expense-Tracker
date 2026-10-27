@@ -24,7 +24,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <h2 className="greet">Hey, {user?.name?.split(" ")[0]}</h2>
+      <h2 className="greet">Hey, {user?.name?.split("")}</h2>
       <p className="muted">Here's your overview for {MONTHS[month - 1]} {year}.</p>
       <div className="card total">
         <div>
