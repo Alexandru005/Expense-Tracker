@@ -1,57 +1,92 @@
 # 💰 Expense Tracker
 
-> A web application that helps users manage their money: track income, expenses and savings, and see where every coin goes.
+> *Know where every coin goes. Helping you track income, expenses and savings with ease.*
 
-![Java](https://img.shields.io/badge/Java-21-orange?logo=openjdk)
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?logo=springboot&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
-![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)
-![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+---
 
-<!-- Add a screenshot or GIF here -->
-<!-- ![Dashboard](docs/dashboard.png) -->
+## 📸 Sneak Peek
 
-## ✨ Features
+### Login / Register
+![Login/Register](web_pics/Screenshot%202026-10-29%20134747.png)
 
-- 👤 Create an account and log in
-- 💵 See your total balance
-- 📅 See all transactions from the current month, with a chart filtered by category
-- ➕ Add a transaction (`INCOME` / `EXPENSE` / `SAVINGS`)
-- 🔎 Browse transactions from a specific period (year, or year and month), with a chart based on categories
-- 🏦 See your total savings and withdraw money from them
-- 📊 See how much you saved in a specific year (chart by months)
+### Home Page
+![Home Page](web_pics/Screenshot%202026-10-29%20135341.png)
+![Home Page - Transactions](web_pics/Screenshot%202026-10-29%20134832.png)
 
-## 🛠️ Tech Stack
+### History Page
+![History Page](web_pics/Screenshot%202026-10-29%20134845.png)
 
-| Layer    | Technologies                                   |
-|----------|------------------------------------------------|
-| Backend  | Java 25, Spring Boot, Maven, PostgreSQL        |
-| Frontend | JavaScript, HTML, CSS, React, Vite, npm        |
-| DevOps   | Docker, Docker Compose                         |
+### Savings Page
+![Savings Page](web_pics/Screenshot%202026-10-29%20134857.png)
+
+---
+
+## ✨ Key Features
+
+- [x] **Authentication:** Create an account and log in securely.
+- [x] **Balance Overview:** See your total balance at a glance.
+- [x] **Monthly Transactions:** View all transactions from the current month, with a chart filtered by category.
+- [x] **Add Transactions:** Create a transaction of type `INCOME`, `EXPENSE` or `SAVINGS`.
+- [x] **History & Filtering:** Browse transactions from a specific period (year, or year and month), with a chart based on categories.
+- [x] **Savings Management:** See your total savings and withdraw money from them.
+- [x] **Yearly Savings Report:** See how much you saved in a specific year (chart by months).
+
+---
 
 ## 📁 Project Structure
 
+A high-level overview of the project's architecture:
+
+```text
+📦 Expense-Tracker
+├── 📂 backend                              # Spring Boot application
+│   ├── 📂 src/main/java/.../expense_tracker
+│   │   ├── 📂 constants                    # Application constants
+│   │   ├── 📂 controller                   # REST API endpoints
+│   │   ├── 📂 dto                          # Data Transfer Objects (transaction, user)
+│   │   ├── 📂 entity                       # Database entities (JPA)
+│   │   ├── 📂 repository                   # Database access layer
+│   │   ├── 📂 security                     # Authentication & authorization
+│   │   └── 📂 service                      # Business logic (impl/)
+│   ├── 📂 src/main/resources               # Configuration & db/migration scripts
+│   ├── 📂 src/test                         # Tests
+│   └── 📄 pom.xml                          # Maven dependencies
+├── 📂 frontend                             # React & Vite application
+│   ├── 📂 public                           # Static assets
+│   ├── 📂 src                              # Components, pages, hooks
+│   ├── 📄 package.json                     # Frontend dependencies and scripts
+│   └── 📄 vite.config.js                   # Vite configuration
+├── 📂 web_pics                             # Images used for documentation
+├── 📄 docker-compose.yml                   # Database container setup
+└── 📄 .env.example                         # Environment variables template
 ```
-expense-tracker/
-├── backend/                
-│   └── src/
-│       ├── main/
-│       │   ├── java/com/alexstefan/expense_tracker/
-│       │   │   ├── constants/    # application constants
-│       │   │   ├── controller/   # REST endpoints
-│       │   │   ├── dto/          # data transfer objects (transaction, user)
-│       │   │   ├── entity/       # JPA entities
-│       │   │   ├── repository/   # database access
-│       │   │   ├── security/     # authentication & authorization
-│       │   │   └── service/      # business logic (impl/)
-│       │   └── resources/
-│       │       └── db/migration/ # database migrations
-│       └── test/                 # tests
-├── frontend/                 
-├── .env.example              
-├── docker-compose.yml        
-└── README.md
-```
+
+---
+
+## 🛠️ Tech Stack
+
+### Backend
+![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/springboot-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
+![Maven](https://img.shields.io/badge/apache_maven-%23C71A36.svg?style=for-the-badge&logo=apachemaven&logoColor=white)
+
+### Database & DevOps
+![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+
+### Frontend
+![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
+
+### Tools
+![IntelliJ IDEA](https://img.shields.io/badge/IntelliJIDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white)
+![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
+![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)
+
+---
 
 ## 🚀 Getting Started
 
@@ -82,7 +117,10 @@ expense-tracker/
 
 4. **Start the backend**: run `ExpenseTrackerApplication` from your IDE
    (`backend/src/main/java/com/alexstefan/expense_tracker`), or from the terminal:
-
+   ```bash
+   cd backend
+   ./mvnw spring-boot:run
+   ```
 
 5. **Start the frontend** (in a new terminal)
    ```bash
@@ -94,6 +132,8 @@ expense-tracker/
 6. **Open the app** at http://localhost:5173
 
 Now you're good to go: track your future expenses and be more disciplined! 💪
+
+---
 
 ## 👤 Author
 
